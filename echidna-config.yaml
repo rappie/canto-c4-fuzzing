@@ -1,0 +1,29 @@
+# initialize: etheno-log.json
+# multi-abi: true
+
+testMode: assertion
+# testMode: optimization
+
+prefix: echidna_
+corpusDir: echidna-corpus
+
+testLimit: 100000000000
+
+# testLimit: 2000000 # 2M
+# testLimit: 1000000 # 1M
+# testLimit: 200000  # 200K
+# testLimit: 20000   # 20K
+
+# seqLen: 100
+# seqLen: 30
+# seqLen: 10
+
+# shrinkLimit: 1000
+
+sender: [
+    "0x5409ed021d9299bf6814279a6a1411a7e866a631", # deployer
+    # "0x6Ecbe1DB9EF729CBe972C83Fb886247691Fb6beb", # attacker0
+    # "0xE36Ea790bc9d7AB70C55260C66D52b1eca985f84", # attacker1
+    # "0xE834EC434DABA538cd1b9Fe1582052B880BD7e63", # victim
+  ]
+
