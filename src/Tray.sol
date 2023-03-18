@@ -64,7 +64,7 @@ contract Tray is ERC721A, Owned {
     }
 
     /// @notice Stores the content of a tray, i.e. all tiles
-    mapping(uint256 => TileData[TILES_PER_TRAY]) private tiles;
+    mapping(uint256 => TileData[TILES_PER_TRAY]) public tiles;
 
     /// @notice Last hash that was used to generate a tray
     bytes32 public lastHash;
