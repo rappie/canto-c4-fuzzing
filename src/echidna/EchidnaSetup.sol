@@ -34,6 +34,9 @@ contract EchidnaSetup is EchidnaConfig {
         );
         tray.transferOwnership(ADDRESS_DEPLOYER); // hevm.prank doesnt work with constructors?
 
+        hevm.prank(ADDRESS_DEPLOYER);
+        tray.endPrelaunchPhase();
+
         note.mint(ADDRESS_DEPLOYER, 10000e18);
         hevm.prank(ADDRESS_DEPLOYER);
         note.approve(address(tray), type(uint256).max);
