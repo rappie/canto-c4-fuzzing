@@ -23,4 +23,8 @@ contract MockTray is Tray {
     function setNamespace(address _namespaceNFT) external {
         namespaceNFT = _namespaceNFT;
     }
+
+    function exists(uint _tokenId) external view returns (bool) {
+        return _exists(_tokenId);
+    }
 }

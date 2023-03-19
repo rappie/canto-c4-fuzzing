@@ -58,6 +58,8 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
         require(count > 0);
         trayId = (trayId % count) + 1;
 
+        require(tray.exists(trayId));
+
         try tray.tokenURI(trayId) returns (string memory uri) {
             Debugger.log("did not revert");
         } catch {
