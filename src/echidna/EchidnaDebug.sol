@@ -4,9 +4,9 @@ import "./EchidnaHelper.sol";
 import "./Debugger.sol";
 
 contract EchidnaDebug is EchidnaHelper {
-    bool debug = true;
+    // bool debug = true;
 
-    // bool debug = false;
+    bool debug = false;
 
     function debugTrayCount() public {
         uint256 count = tray.nextTokenId() - 1;
