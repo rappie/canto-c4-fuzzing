@@ -7,8 +7,19 @@ import "./Debugger.sol";
 import "./Tools.sol";
 
 contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
-    function testTokenURIShouldNotRevert(uint256 tokenId) public {
+    function testBuyShouldNotRevert(uint8 fromAccId, uint256 amount) public {
+        address from = getAccountFromUint8(fromAccId);
 
+        hevm.prank(from);
+        try tray.buy(amount) {
+            Debugger.log("buy success");
+        } catch {
+            Debugger.log("buy failed");
+            assert(false);
+        }
+    }
+
+    function testTokenURIShouldNotRevert(uint256 tokenId) public {
         uint256 count = tray.nextTokenId() - 1;
         require(count > 0);
 
