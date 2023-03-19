@@ -34,7 +34,7 @@ contract Tray is ERC721A, Owned {
     uint256 private constant PRE_LAUNCH_MINT_CAP = 1_000;
 
     /// @notice Price of one tray in $NOTE
-    uint256 public immutable trayPrice;
+    uint256 public trayPrice;
 
     /*//////////////////////////////////////////////////////////////
                                  ADDRESSES
