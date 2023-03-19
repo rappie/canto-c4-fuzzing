@@ -27,13 +27,12 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
         }
     }
 
-    function testTokenURIShouldNotRevert(uint256 tokenId) public {
+    function testTokenURIShouldNotRevert(uint256 trayId) public {
         uint256 count = tray.nextTokenId() - 1;
         require(count > 0);
+        trayId = (trayId % count) + 1;
 
-        tokenId = (tokenId % count) + 1;
-
-        try tray.tokenURI(tokenId) returns (string memory uri) {
+        try tray.tokenURI(trayId) returns (string memory uri) {
             Debugger.log("did not revert");
         } catch {
             Debugger.log("reverted");
