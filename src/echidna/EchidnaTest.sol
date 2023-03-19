@@ -12,7 +12,9 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
         uint256 amount = uint256(_amount);
 
         require(note.balanceOf(from) >= amount * tray.trayPrice());
-        require(note.allowance(from, address(tray)) >= amount * tray.trayPrice());
+        require(
+            note.allowance(from, address(tray)) >= amount * tray.trayPrice()
+        );
         require(amount > 0);
         require(amount < 73); // prevent out of gas error
 
