@@ -9,7 +9,12 @@ import "./Tools.sol";
 import "../Utils.sol";
 
 contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
-    function testFuseShouldNotRevert(uint8 fromAccId, uint256 trayId) public {
+    function testFuseShouldNotRevert(
+        uint8 fromAccId,
+        uint256 trayId,
+        uint8 tileOffset,
+        uint8 skinToneModifier
+    ) public {
         address from = getAccountFromUint8(fromAccId);
 
         uint256 count = tray.nextTokenId() - 1;
@@ -24,7 +29,7 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
         Namespace.CharacterData[] memory list = new Namespace.CharacterData[](
             1
         );
-        list[0] = Namespace.CharacterData(trayId, 0, 0);
+        list[0] = Namespace.CharacterData(trayId, tileOffset, skinToneModifier);
 
         hevm.prank(from);
         try namespace.fuse(list) {
@@ -41,6 +46,11 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
                 Utils.EmojiDoesNotSupportSkinToneModifier.selector
             ) {
                 Debugger.log("EmojiDoesNotSupportSkinToneModifier");
+            } else if (
+                reasonSelector ==
+                Namespace.CannotFuseCharacterWithSkinTone.selector
+            ) {
+                Debugger.log("CannotFuseCharacterWithSkinTone");
             } else {
                 Debugger.log("Unknown reason");
                 assert(false);
