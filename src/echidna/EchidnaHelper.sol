@@ -4,6 +4,10 @@ import "./EchidnaSetup.sol";
 import "./Debugger.sol";
 
 contract EchidnaHelper is EchidnaSetup {
+    function setLastHash(bytes32 _lastHash) public {
+        tray.setLastHash(_lastHash);
+    }
+
     function buy(uint8 fromAccId, uint256 amount) public {
         address from = getAccountFromUint8(fromAccId);
 

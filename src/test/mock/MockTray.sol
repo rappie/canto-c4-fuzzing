@@ -15,4 +15,8 @@ contract MockTray is Tray {
     function nextTokenId() external view returns (uint256) {
         return _nextTokenId();
     }
+
+    function setLastHash(bytes32 _lastHash) external {
+        lastHash = _lastHash;
+    }
 }
