@@ -7,8 +7,13 @@ import "./Debugger.sol";
 import "./Tools.sol";
 
 contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
-    function testBuyShouldNotRevert(uint8 fromAccId, uint256 amount) public {
+    function testBuyShouldNotRevert(uint8 fromAccId, uint8 _amount) public {
         address from = getAccountFromUint8(fromAccId);
+        uint256 amount = uint256(_amount);
+
+        require(note.balanceOf(from) >= amount * tray.trayPrice());
+        require(amount > 0);
+        require(amount < 73); // prevent out of gas error
 
         hevm.prank(from);
         try tray.buy(amount) {
