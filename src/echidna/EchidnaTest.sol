@@ -7,6 +7,27 @@ import "./Debugger.sol";
 import "./Tools.sol";
 
 contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
+    function testFuseShouldNotRevert(uint8 fromAccId, uint256 trayId) public {
+        address from = getAccountFromUint8(fromAccId);
+
+        uint256 count = tray.nextTokenId() - 1;
+        require(count > 0);
+        trayId = (trayId % count) + 1;
+
+        Namespace.CharacterData[] memory list = new Namespace.CharacterData[](
+            1
+        );
+        list[0] = Namespace.CharacterData(trayId, 0, 0);
+
+        hevm.prank(from);
+        try namespace.fuse(list) {
+            Debugger.log("fuse success");
+        } catch {
+            Debugger.log("fuse fail");
+            assert(false);
+        }
+    }
+
     function testBuyShouldNotRevert(uint8 fromAccId, uint8 _amount) public {
         address from = getAccountFromUint8(fromAccId);
         uint256 amount = uint256(_amount);
