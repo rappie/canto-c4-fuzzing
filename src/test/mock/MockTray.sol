@@ -19,4 +19,8 @@ contract MockTray is Tray {
     function setLastHash(bytes32 _lastHash) external {
         lastHash = _lastHash;
     }
+
+    function setNamespace(address _namespaceNFT) external {
+        namespaceNFT = _namespaceNFT;
+    }
 }
