@@ -75,8 +75,14 @@ contract Tray is ERC721A, Owned {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
-    event RevenueAddressUpdated(address indexed oldRevenueAddress, address indexed newRevenueAddress);
-    event NoteAddressUpdate(address indexed oldNoteAddress, address indexed newNoteAddress);
+    event RevenueAddressUpdated(
+        address indexed oldRevenueAddress,
+        address indexed newRevenueAddress
+    );
+    event NoteAddressUpdate(
+        address indexed oldNoteAddress,
+        address indexed newNoteAddress
+    );
     event PrelaunchEnded();
 
     /*//////////////////////////////////////////////////////////////
@@ -109,19 +115,27 @@ contract Tray is ERC721A, Owned {
         namespaceNFT = _namespaceNFT;
         if (block.chainid == 7700) {
             // Register CSR on Canto mainnnet
-            Turnstile turnstile = Turnstile(0xEcf044C5B4b867CFda001101c617eCd347095B44);
+            Turnstile turnstile = Turnstile(
+                0xEcf044C5B4b867CFda001101c617eCd347095B44
+            );
             turnstile.register(tx.origin);
         }
     }
 
     /// @notice Get the token URI for the specified _id
     /// @param _id ID to query for
-    function tokenURI(uint256 _id) public view override returns (string memory) {
+    function tokenURI(uint256 _id)
+        public
+        view
+        override
+        returns (string memory)
+    {
         if (!_exists(_id)) revert TrayNotMinted(_id);
         uint256 numPrelaunchMinted = prelaunchMinted;
         if (numPrelaunchMinted != type(uint256).max) {
             // Prelaunch trays become invalid after the phase has ended
-            if (_id <= numPrelaunchMinted) revert PrelaunchTrayCannotBeUsedAfterPrelaunch(_id);
+            if (_id <= numPrelaunchMinted)
+                revert PrelaunchTrayCannotBeUsedAfterPrelaunch(_id);
         }
         // Need to do an explicit copy here, implicit one not supported
         TileData[TILES_PER_TRAY] storage storedNftTiles = tiles[_id];
@@ -152,9 +166,15 @@ contract Tray is ERC721A, Owned {
         if (prelaunchMinted == type(uint256).max) {
             // Still in prelaunch phase
             if (msg.sender != owner) revert OnlyOwnerCanMintPreLaunch();
-            if (startingTrayId + _amount - 1 > PRE_LAUNCH_MINT_CAP) revert MintExceedsPreLaunchAmount();
+            if (startingTrayId + _amount - 1 > PRE_LAUNCH_MINT_CAP)
+                revert MintExceedsPreLaunchAmount();
         } else {
-            SafeTransferLib.safeTransferFrom(note, msg.sender, revenueAddress, _amount * trayPrice);
+            SafeTransferLib.safeTransferFrom(
+                note,
+                msg.sender,
+                revenueAddress,
+                _amount * trayPrice
+            );
         }
         for (uint256 i; i < _amount; ++i) {
             TileData[TILES_PER_TRAY] memory trayTiledata;
@@ -181,8 +201,10 @@ contract Tray is ERC721A, Owned {
         if (msg.sender == namespaceNFT) {
             // Disallow fusing for prelaunch trays after phase has ended
             uint256 numPrelaunchMinted = prelaunchMinted;
-            if (numPrelaunchMinted != type(uint256).max && _id <= numPrelaunchMinted)
-                revert PrelaunchTrayCannotBeUsedAfterPrelaunch(_id);
+            if (
+                numPrelaunchMinted != type(uint256).max &&
+                _id <= numPrelaunchMinted
+            ) revert PrelaunchTrayCannotBeUsedAfterPrelaunch(_id);
         }
         delete tiles[_id];
         _burn(_id);
@@ -192,7 +214,11 @@ contract Tray is ERC721A, Owned {
     /// @dev Reverts for non-existing tray ID
     /// @param _trayId Tray to query
     /// @param _tileOffset Offset of the tile within the query, needs to be between 0 .. TILES_PER_TRAY - 1
-    function getTile(uint256 _trayId, uint8 _tileOffset) external view returns (TileData memory tileData) {
+    function getTile(uint256 _trayId, uint8 _tileOffset)
+        external
+        view
+        returns (TileData memory tileData)
+    {
         if (!_exists(_trayId)) revert TrayNotMinted(_trayId);
         tileData = tiles[_trayId][_tileOffset];
     }
@@ -200,7 +226,11 @@ contract Tray is ERC721A, Owned {
     /// @notice Query all tiles of a tray
     /// @dev Reverts for non-existing tray ID
     /// @param _trayId Tray to query
-    function getTiles(uint256 _trayId) external view returns (TileData[TILES_PER_TRAY] memory tileData) {
+    function getTiles(uint256 _trayId)
+        external
+        view
+        returns (TileData[TILES_PER_TRAY] memory tileData)
+    {
         if (!_exists(_trayId)) revert TrayNotMinted(_trayId);
         tileData = tiles[_trayId];
     }
@@ -215,7 +245,10 @@ contract Tray is ERC721A, Owned {
 
     /// @notice Change the revenue address
     /// @param _newRevenueAddress New address to use
-    function changeRevenueAddress(address _newRevenueAddress) external onlyOwner {
+    function changeRevenueAddress(address _newRevenueAddress)
+        external
+        onlyOwner
+    {
         address currentRevenueAddress = revenueAddress;
         revenueAddress = _newRevenueAddress;
         emit RevenueAddressUpdated(currentRevenueAddress, _newRevenueAddress);
@@ -223,7 +256,8 @@ contract Tray is ERC721A, Owned {
 
     /// @notice End the prelaunch phase and start the public mint
     function endPrelaunchPhase() external onlyOwner {
-        if (prelaunchMinted != type(uint256).max) revert PrelaunchAlreadyEnded();
+        if (prelaunchMinted != type(uint256).max)
+            revert PrelaunchAlreadyEnded();
         prelaunchMinted = _nextTokenId() - 1;
         emit PrelaunchEnded();
     }
@@ -242,7 +276,11 @@ contract Tray is ERC721A, Owned {
         }
     }
 
-    function _drawing(uint256 _seed) private pure returns (TileData memory tileData) {
+    function _drawing(uint256 _seed)
+        private
+        pure
+        returns (TileData memory tileData)
+    {
         uint256 res = _seed % SUM_ODDS;
         uint256 charRandValue = Utils.iteratePRNG(_seed); // Iterate PRNG to not have any biasedness / correlation between random numbers
         if (res < 32) {
@@ -252,7 +290,9 @@ contract Tray is ERC721A, Owned {
             tileData.characterIndex = uint16(charRandValue % NUM_CHARS_LETTERS);
             if (res < 64) {
                 tileData.fontClass = 1;
-                tileData.characterIndex = uint16(charRandValue % NUM_CHARS_LETTERS_NUMBERS);
+                tileData.characterIndex = uint16(
+                    charRandValue % NUM_CHARS_LETTERS_NUMBERS
+                );
             } else if (res < 80) {
                 tileData.fontClass = 2;
             } else if (res < 96) {
