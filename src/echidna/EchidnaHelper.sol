@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import "./EchidnaSetup.sol";
+import "./Debugger.sol";
 
 contract EchidnaHelper is EchidnaSetup {
     function buy(uint8 fromAccId, uint256 amount) public {
