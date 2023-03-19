@@ -8,4 +8,10 @@ contract EchidnaDebug is EchidnaHelper {
 
     bool debug = false;
 
+    function debugTrayAddress() public {
+        require(debug);
+        Debugger.log("tray address", address(tray));
+        assert(false);
+    }
+
 }
