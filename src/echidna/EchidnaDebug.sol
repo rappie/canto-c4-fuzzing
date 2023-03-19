@@ -9,6 +9,8 @@ contract EchidnaDebug is EchidnaHelper {
     bool debug = false;
 
     function debugTrayCount() public {
+        require(debug, "Debugging is disabled");
+
         uint256 count = tray.nextTokenId() - 1;
         Debugger.log("tray count", count);
         assert(count <= 5);
