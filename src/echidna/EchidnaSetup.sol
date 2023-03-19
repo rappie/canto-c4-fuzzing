@@ -51,9 +51,13 @@ contract EchidnaSetup is EchidnaConfig {
         note.mint(ADDRESS_DEPLOYER, 10000e18);
         hevm.prank(ADDRESS_DEPLOYER);
         note.approve(address(tray), type(uint256).max);
+        hevm.prank(ADDRESS_DEPLOYER);
+        note.approve(address(namespace), type(uint256).max);
 
         note.mint(ADDRESS_ATTACKER0, 10000e18);
         hevm.prank(ADDRESS_ATTACKER0);
         note.approve(address(tray), type(uint256).max);
+        hevm.prank(ADDRESS_ATTACKER0);
+        note.approve(address(namespace), type(uint256).max);
     }
 }
