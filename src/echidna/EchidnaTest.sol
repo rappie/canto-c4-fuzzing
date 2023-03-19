@@ -37,9 +37,8 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
             if (reasonSelector == Namespace.NameAlreadyRegistered.selector) {
                 Debugger.log("NameAlreadyRegistered");
             } else if (
-                reasonSelector == Utils
-                    .EmojiDoesNotSupportSkinToneModifier
-                    .selector
+                reasonSelector ==
+                Utils.EmojiDoesNotSupportSkinToneModifier.selector
             ) {
                 Debugger.log("EmojiDoesNotSupportSkinToneModifier");
             } else {
