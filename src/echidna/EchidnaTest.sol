@@ -6,6 +6,8 @@ import "./EchidnaDebug.sol";
 import "./Debugger.sol";
 import "./Tools.sol";
 
+import "../Utils.sol";
+
 contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
     function testFuseShouldNotRevert(uint8 fromAccId, uint256 trayId) public {
         address from = getAccountFromUint8(fromAccId);
@@ -27,9 +29,23 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
         hevm.prank(from);
         try namespace.fuse(list) {
             Debugger.log("fuse success");
-        } catch {
+        } catch (bytes memory reason) {
+            bytes4 reasonSelector = bytes4(reason);
+
             Debugger.log("fuse fail");
-            assert(false);
+
+            if (reasonSelector == Namespace.NameAlreadyRegistered.selector) {
+                Debugger.log("NameAlreadyRegistered");
+            } else if (
+                reasonSelector == Utils
+                    .EmojiDoesNotSupportSkinToneModifier
+                    .selector
+            ) {
+                Debugger.log("EmojiDoesNotSupportSkinToneModifier");
+            } else {
+                Debugger.log("Unknown reason");
+                assert(false);
+            }
         }
     }
 
