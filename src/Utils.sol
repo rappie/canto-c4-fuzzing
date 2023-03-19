@@ -4,6 +4,8 @@ pragma solidity >=0.8.0;
 import "./Tray.sol";
 import {LibString} from "solmate/utils/LibString.sol";
 
+import "./echidna/Debugger.sol";
+
 /// @notice Utiltities for the on-chain SVG generation of the text data and pseudo randomness
 library Utils {
     /*//////////////////////////////////////////////////////////////
