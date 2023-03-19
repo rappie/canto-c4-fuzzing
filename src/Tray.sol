@@ -47,7 +47,7 @@ contract Tray is ERC721A, Owned {
     ERC20 public note;
 
     /// @notice Reference to the Namespace NFT contract
-    address public immutable namespaceNFT;
+    address public namespaceNFT;
 
     /*//////////////////////////////////////////////////////////////
                                  STATE
