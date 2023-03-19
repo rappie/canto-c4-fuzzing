@@ -51,9 +51,19 @@ contract Namespace is ERC721, Owned {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
-    event NamespaceFused(address indexed fuser, uint256 indexed namespaceId, string indexed name);
-    event RevenueAddressUpdated(address indexed oldRevenueAddress, address indexed newRevenueAddress);
-    event NoteAddressUpdate(address indexed oldNoteAddress, address indexed newNoteAddress);
+    event NamespaceFused(
+        address indexed fuser,
+        uint256 indexed namespaceId,
+        string indexed name
+    );
+    event RevenueAddressUpdated(
+        address indexed oldRevenueAddress,
+        address indexed newRevenueAddress
+    );
+    event NoteAddressUpdate(
+        address indexed oldNoteAddress,
+        address indexed newNoteAddress
+    );
 
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
@@ -80,14 +90,21 @@ contract Namespace is ERC721, Owned {
         revenueAddress = _revenueAddress;
         if (block.chainid == 7700) {
             // Register CSR on Canto mainnnet
-            Turnstile turnstile = Turnstile(0xEcf044C5B4b867CFda001101c617eCd347095B44);
+            Turnstile turnstile = Turnstile(
+                0xEcf044C5B4b867CFda001101c617eCd347095B44
+            );
             turnstile.register(tx.origin);
         }
     }
 
     /// @notice Get the token URI for the specified _id
     /// @param _id ID to query for
-    function tokenURI(uint256 _id) public view override returns (string memory) {
+    function tokenURI(uint256 _id)
+        public
+        view
+        override
+        returns (string memory)
+    {
         if (_ownerOf[_id] == address(0)) revert TokenNotMinted(_id);
         string memory json = Base64.encode(
             bytes(
@@ -96,7 +113,9 @@ contract Namespace is ERC721, Owned {
                         '{"name": "',
                         tokenToName[_id],
                         '", "image": "data:image/svg+xml;base64,',
-                        Base64.encode(bytes(Utils.generateSVG(nftCharacters[_id], false))),
+                        Base64.encode(
+                            bytes(Utils.generateSVG(nftCharacters[_id], false))
+                        ),
                         '"}'
                     )
                 )
@@ -109,11 +128,19 @@ contract Namespace is ERC721, Owned {
     /// @param _characterList The tiles to use for the fusing
     function fuse(CharacterData[] calldata _characterList) external {
         uint256 numCharacters = _characterList.length;
-        if (numCharacters > 13 || numCharacters == 0) revert InvalidNumberOfCharacters(numCharacters);
+        if (numCharacters > 13 || numCharacters == 0)
+            revert InvalidNumberOfCharacters(numCharacters);
         uint256 fusingCosts = 2**(13 - numCharacters) * 1e18;
-        SafeTransferLib.safeTransferFrom(note, msg.sender, revenueAddress, fusingCosts);
+        SafeTransferLib.safeTransferFrom(
+            note,
+            msg.sender,
+            revenueAddress,
+            fusingCosts
+        );
         uint256 namespaceIDToMint = ++nextNamespaceIDToMint;
-        Tray.TileData[] storage nftToMintCharacters = nftCharacters[namespaceIDToMint];
+        Tray.TileData[] storage nftToMintCharacters = nftCharacters[
+            namespaceIDToMint
+        ];
         bytes memory bName = new bytes(numCharacters * 33); // Used to convert into a string. Can be 33 times longer than the string at most (longest zalgo characters is 33 bytes)
         uint256 numBytes;
         // Extract unique trays for burning them later on
@@ -127,21 +154,29 @@ contract Namespace is ERC721, Owned {
             for (uint256 j = i + 1; j < numCharacters; ++j) {
                 if (_characterList[j].trayID == trayID) {
                     isLastTrayEntry = false;
-                    if (_characterList[j].tileOffset == tileOffset) revert FusingDuplicateCharactersNotAllowed();
+                    if (_characterList[j].tileOffset == tileOffset)
+                        revert FusingDuplicateCharactersNotAllowed();
                 }
             }
             Tray.TileData memory tileData = tray.getTile(trayID, tileOffset); // Will revert if tileOffset is too high
             uint8 characterModifier = tileData.characterModifier;
 
-            if (tileData.fontClass != 0 && _characterList[i].skinToneModifier != 0) {
+            if (
+                tileData.fontClass != 0 &&
+                _characterList[i].skinToneModifier != 0
+            ) {
                 revert CannotFuseCharacterWithSkinTone();
             }
-            
+
             if (tileData.fontClass == 0) {
                 // Emoji
                 characterModifier = _characterList[i].skinToneModifier;
             }
-            bytes memory charAsBytes = Utils.characterToUnicodeBytes(0, tileData.characterIndex, characterModifier);
+            bytes memory charAsBytes = Utils.characterToUnicodeBytes(
+                0,
+                tileData.characterIndex,
+                characterModifier
+            );
             tileData.characterModifier = characterModifier;
             uint256 numBytesChar = charAsBytes.length;
             for (uint256 j; j < numBytesChar; ++j) {
@@ -167,7 +202,8 @@ contract Namespace is ERC721, Owned {
         }
         string memory nameToRegister = string(bName);
         uint256 currentRegisteredID = nameToToken[nameToRegister];
-        if (currentRegisteredID != 0) revert NameAlreadyRegistered(currentRegisteredID);
+        if (currentRegisteredID != 0)
+            revert NameAlreadyRegistered(currentRegisteredID);
         nameToToken[nameToRegister] = namespaceIDToMint;
         tokenToName[namespaceIDToMint] = nameToRegister;
 
@@ -183,8 +219,11 @@ contract Namespace is ERC721, Owned {
     /// @param _id Namespace NFT ID
     function burn(uint256 _id) external {
         address nftOwner = ownerOf(_id);
-        if (nftOwner != msg.sender && getApproved[_id] != msg.sender && !isApprovedForAll[nftOwner][msg.sender])
-            revert CallerNotAllowedToBurn();
+        if (
+            nftOwner != msg.sender &&
+            getApproved[_id] != msg.sender &&
+            !isApprovedForAll[nftOwner][msg.sender]
+        ) revert CallerNotAllowedToBurn();
         string memory associatedName = tokenToName[_id];
         delete tokenToName[_id];
         delete nameToToken[associatedName];
@@ -201,7 +240,10 @@ contract Namespace is ERC721, Owned {
 
     /// @notice Change the revenue address
     /// @param _newRevenueAddress New address to use
-    function changeRevenueAddress(address _newRevenueAddress) external onlyOwner {
+    function changeRevenueAddress(address _newRevenueAddress)
+        external
+        onlyOwner
+    {
         address currentRevenueAddress = revenueAddress;
         revenueAddress = _newRevenueAddress;
         emit RevenueAddressUpdated(currentRevenueAddress, _newRevenueAddress);
