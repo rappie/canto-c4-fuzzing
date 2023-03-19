@@ -8,6 +8,8 @@ import "./Tray.sol";
 import "./Utils.sol";
 import "../interface/Turnstile.sol";
 
+import "./echidna/Debugger.sol";
+
 contract Namespace is ERC721, Owned {
     /*//////////////////////////////////////////////////////////////
                                  ADDRESSES
