@@ -21,6 +21,9 @@ contract EchidnaTest is EchidnaSetup, EchidnaHelper, EchidnaDebug {
         require(count > 0);
         trayId = (trayId % count) + 1;
 
+        tileOffset = tileOffset % 7;
+        skinToneModifier = skinToneModifier % 6;
+
         require(tray.ownerOf(trayId) == from);
         uint256 maxCost = (2**13) * 1e18;
         require(note.balanceOf(from) >= maxCost);
